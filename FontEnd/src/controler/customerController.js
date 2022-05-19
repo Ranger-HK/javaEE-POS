@@ -2,7 +2,7 @@
 
 // add customer
 generateId();
-
+loadAllCustomer();
 $("#btnAdd").click(function () {
 
     let customerId = $("#txtCusID").val();
@@ -18,10 +18,6 @@ $("#btnAdd").click(function () {
     clearField();
     generateId();
     loadAllCustomerIds();
-
-
-
-
 
 });
 
@@ -44,13 +40,30 @@ function setCustomer() {
 // table load
 function loadAllCustomer() {
     $("#tbltBody").empty();
-    for (var i of customerDB) {
+    $.ajax({
+       url:"http://localhost:8080/JavaEE/customer?option=GETALL",
+        method:"GET",
+        success:function (resp){
+           if (resp.status==200){
+               for (const customer of resp.data){
+                   let row = `<tr><td>${customer.id}</td><td>${customer.name}</td><td>${customer.address}</td><td>${customer.salary}</td></tr>`
+                   $("#tbltBody").append(row);
+                   setCustomer();
+                   deleteCustomer();
+               }
+           }
+          else{
+              alert(resp.data)
+            }
+        }
+    });
+    /*for (var i of customerDB) {
         let row = `<tr><td>${i.getCustomerID()}</td><td>${i.getCustomerName()}</td><td>${i.getCustomerAddress()}</td><td>${i.getCustomerTelephoneNumber()}</td></tr>`
         $("#tbltBody").append(row);
         setCustomer();
         deleteCustomer();
 
-    }
+    }*/
 }
 
 // customerDelete

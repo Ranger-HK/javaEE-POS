@@ -21,48 +21,60 @@ import java.sql.SQLException;
 public class CustomerServlet extends HttpServlet {
     @Resource(name = "java:comp/env/jdbc/pool")
     DataSource ds;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        JsonObjectBuilder response = Json.createObjectBuilder();
+        JsonObjectBuilder dataMsgBuilder = Json.createObjectBuilder();
         PrintWriter writer = resp.getWriter();
 
         Connection connection = null;
         try {
+            connection = ds.getConnection();
             String option = req.getParameter("option");
-            ds.getConnection();
-            switch (option){
-                case "GET ALL":
+            switch (option) {
+                case "GETALL":
                     ResultSet rst = connection.prepareStatement("SELECT * FROM customer").executeQuery();
-                    while (rst.next()){
-                        String id = rst.getString(1);
-                        String name = rst.getString(2);
-                        String address = rst.getString(3);
-                        double salary = rst.getDouble(4);
+                    while (rst.next()) {
+                        String cusID = rst.getString(1);
+                        String cusName = rst.getString(2);
+                        String cusAddress = rst.getString(3);
+                        double cusSalary = rst.getDouble(4);
 
-                        objectBuilder.add("id",id);
-                        objectBuilder.add("name",name);
-                        objectBuilder.add("address",address);
-                        objectBuilder.add("salary",salary);
+                        resp.setStatus(HttpServletResponse.SC_OK);//201
+
+                        objectBuilder.add("id", cusID);
+                        objectBuilder.add("name", cusName);
+                        objectBuilder.add("address", cusAddress);
+                        objectBuilder.add("salary", cusSalary);
 
                         arrayBuilder.add(objectBuilder.build());
-                    }
-                    response.add("status",200);
-                    response.add("massage","Done");
-                    response.add("data",arrayBuilder.build());
-                    writer.print(response.build());
-                    break;
 
+                        System.out.println(cusID + " " + cusAddress + " " + cusName + " " + cusSalary);
+                    }
+//                    JsonObjectBuilder dataMsgBuilder = Json.createObjectBuilder();
+                    dataMsgBuilder.add("data", arrayBuilder.build());
+                    dataMsgBuilder.add("massage", "Done");
+                    dataMsgBuilder.add("status", 200);
+
+//                    PrintWriter writer = resp.getWriter();
+                    writer.print(dataMsgBuilder.build());
+                    break;
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }finally {
+        } catch (SQLException e) {
+            JsonObjectBuilder response = Json.createObjectBuilder();
+            response.add("status", 400);
+            response.add("message", "Error");
+            response.add("data", e.getLocalizedMessage());
+            writer.print(response.build());
+            resp.setStatus(HttpServletResponse.SC_OK); //200
+        } finally {
             try {
                 connection.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
