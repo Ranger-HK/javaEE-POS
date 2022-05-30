@@ -62,6 +62,59 @@ public class CustomerServlet extends HttpServlet {
 //                    PrintWriter writer = resp.getWriter();
                     writer.print(dataMsgBuilder.build());
                     break;
+
+                case "GENERATED_ID":
+                    ResultSet rstI = connection.prepareStatement("SELECT id FROM customer ORDER BY id DESC LIMIT 1").executeQuery();
+                    if (rstI.next()) {
+                        int tempId = Integer.parseInt(rstI.getString(1).split("-")[1]);
+                        tempId += 1;
+                        if (tempId < 10) {
+                            objectBuilder.add("id", "C00-00" + tempId);
+                        } else if (tempId < 100) {
+                            objectBuilder.add("id", "C00-0" + tempId);
+                        } else if (tempId < 1000) {
+                            objectBuilder.add("id", "C00-" + tempId);
+                        }
+                    } else {
+                        objectBuilder.add("id", "C00-001");
+                    }
+
+                    dataMsgBuilder.add("data", objectBuilder.build());
+                    dataMsgBuilder.add("message", "Done");
+                    dataMsgBuilder.add("status", 200);
+                    writer.print(dataMsgBuilder.build());
+                    break;
+
+                case "SEARCH":
+                    String id = req.getParameter("id");
+                    PreparedStatement pstm = connection.prepareStatement("SELECT * FROM customer WHERE id LIKE ?");
+                    pstm.setObject(1, "%"+id+"%");
+                    ResultSet resultSet = pstm.executeQuery();
+
+                    while (resultSet.next()) {
+                        String cusIDS = resultSet.getString(1);
+                        String cusNameS = resultSet.getString(2);
+                        String cusAddressS = resultSet.getString(3);
+                        int cusSalaryS = resultSet.getInt(4);
+
+                        resp.setStatus(HttpServletResponse.SC_OK);//201
+
+                        objectBuilder.add("id", cusIDS);
+                        objectBuilder.add("name", cusNameS);
+                        objectBuilder.add("address", cusAddressS);
+                        objectBuilder.add("salary", cusSalaryS);
+
+                        arrayBuilder.add(objectBuilder.build());
+
+                        System.out.println(cusIDS + " " + cusNameS + " " + cusAddressS + " " + cusSalaryS);
+                    }
+                    dataMsgBuilder.add("data", arrayBuilder.build());
+                    dataMsgBuilder.add("message", "Done");
+                    dataMsgBuilder.add("status", 200);
+
+                    writer.print(dataMsgBuilder.build());
+                    break;
+
             }
         } catch (SQLException e) {
             JsonObjectBuilder response = Json.createObjectBuilder();
@@ -210,6 +263,8 @@ public class CustomerServlet extends HttpServlet {
         }
 
     }
+
+
 }
 
 

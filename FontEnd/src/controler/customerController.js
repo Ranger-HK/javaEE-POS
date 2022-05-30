@@ -15,7 +15,7 @@ $("#btnAdd").click(function () {
                 loadAllCustomer()
                 clearField() //Clear Input Fields
                 loadAllCustomerIds();
-                // generateId();
+                generateId();
             } else {
                 alert(res.data);
             }
@@ -164,7 +164,29 @@ $("#btnUpdate").click(function () {
 
 // searchCustomer
 $("#btnSearch").click(function () {
-    var searchId = $("#txtSearch").val();
+    if (!$("#txtSearch").val()) {
+        loadAllCustomer();
+        return;
+    }
+    $.ajax({
+        url: "http://localhost:8080/JavaEE/customer?option=SEARCH", method: "GET", data: {
+            id: $("#txtSearch").val()
+        }, success: function (resp) {
+            if (resp.status == 200) {
+                $("#tbltBody").empty();
+                for (const customer of resp.data) {
+                    let row = `<tr><td>${customer.id}</td><td>${customer.name}</td><td>${customer.address}</td><td>${customer.salary}</td></tr>`;
+                    $("#tbltBody").append(row);
+
+                }
+            } else {
+                alert(resp.data);
+                loadAllCustomer();
+                clearField();
+            }
+        }
+    });
+   /* var searchId = $("#txtSearch").val();
     var response = searchCustomer(searchId);
     if (response) {
         $("#txtCusID").val(response.getCustomerID());
@@ -174,7 +196,7 @@ $("#btnSearch").click(function () {
     } else {
         clearFiled();
         alert("Invalid Customer Name");
-    }
+    }*/
 });
 
 
@@ -189,12 +211,14 @@ function searchCustomer(id) {
 
 // ClearMethod
 function clearField() {
-    $("#txtCusID,#txtCusName,#txtCusAddress,#txtCusTP").val("");
+    $("#txtCusID,#txtCusName,#txtCusAddress,#txtCusTP,txtSearch").val("");
 }
 
 
 $("#btnClear").click(function () {
     clearField();
+    loadAllCustomer();
+
 });
 
 //text fields focusing
@@ -217,7 +241,16 @@ $("#txtCusAddress").keydown(function (event) {
 });
 
 function generateId() {
-    let index = customerDB.length - 1;
+    $.ajax({
+        url: "http://localhost:8080/JavaEE/customer?option=GENERATED_ID", method: "GET", success: function (resp) {
+            if (resp.status == 200) {
+                $("#txtCusID").val(resp.data.id);
+            } else {
+                alert(resp.data);
+            }
+        }
+    });
+  /*  let index = customerDB.length - 1;
     let id;
     let temp;
     if (index != -1) {
@@ -234,7 +267,7 @@ function generateId() {
         $("#txtCusID").val("C00-0" + temp);
     } else {
         $("#txtCusID").val("C00-" + temp);
-    }
+    }*/
 }
 
 
