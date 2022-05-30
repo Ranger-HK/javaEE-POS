@@ -1,10 +1,34 @@
 // Customer
 
 // add customer
+
 generateId();
 loadAllCustomer();
 $("#btnAdd").click(function () {
 
+    $.ajax({
+        url: `http://localhost:8080/JavaEE/customer`,
+        method: "POST",
+        data: $("#addCusForm").serialize(),
+        success: function (res) {
+            if (res.status == 200) {
+                loadAllCustomer()
+                clearField() //Clear Input Fields
+                loadAllCustomerIds();
+                // generateId();
+            } else {
+                alert(res.data);
+            }
+
+        },
+        error: function (ob, textStatus, error) {
+            console.log(ob);
+            console.log(textStatus);
+            console.log(error);
+        }
+    });
+
+/*
     let customerId = $("#txtCusID").val();
     let customerName = $("#txtCusName").val();
     let customerAddress = $("#txtCusAddress").val();
@@ -16,9 +40,9 @@ $("#btnAdd").click(function () {
     customerDB.push(customerOB);
     loadAllCustomer();
     clearField();
-    generateId();
-    loadAllCustomerIds();
 
+    loadAllCustomerIds();
+    deleteCustomer();*/
 });
 
 // textfiled click set
@@ -66,9 +90,28 @@ function loadAllCustomer() {
     }*/
 }
 
+$("#btnDelete").click(function () {
+    deleteCustomer();
+});
+
 // customerDelete
 function deleteCustomer() {
-    $("#btnDelete").click(function () {
+    var clickRowId = $("#txtCusID").val();
+    $.ajax({
+        url:`http://localhost:8080/JavaEE/customer?customerId=${clickRowId}`,
+        method:"DELETE",
+        success:function (resp){
+            if (resp.status == 200) {
+                generateId();
+                clearField();
+                loadAllCustomer();
+            }else if (resp.status==400){
+                alert(resp.data);
+            }
+        }
+    });
+}
+   /* $("#btnDelete").click(function () {
         let getClickData = $("#txtCusID").val();
         for (let i = 0; i < customerDB.length; i++) {
             if (customerDB[i].getCustomerID() == getClickData) {
@@ -77,13 +120,31 @@ function deleteCustomer() {
         }
         loadAllCustomer();
         clearField();
-    });
-}
+    });*/
+
 
 
 // customerUpdate
 $("#btnUpdate").click(function () {
-    let customerId = $("#txtCusID").val();
+    var cusOb = {
+        id: $("#txtCusID").val(),
+        name: $("#txtCusName").val(),
+        address: $("#txtCusAddress").val(),
+        salary: $("#txtCusTP").val()
+    }
+
+    $.ajax({
+        url: "http://localhost:8080/JavaEE/customer", method: "PUT",
+        data: JSON.stringify(cusOb), success: function (resp) {
+            if (resp.status == 200) {
+                loadAllCustomer();
+                clearField();
+            } else if (resp.status == 400) {
+                alert(resp.data);
+            }
+        }
+    });
+  /*  let customerId = $("#txtCusID").val();
     let customerName = $("#txtCusName").val();
     let customerAddress = $("#txtCusAddress").val();
     let customerTP = $("#txtCusTP").val();
@@ -97,7 +158,7 @@ $("#btnUpdate").click(function () {
 
     }
     loadAllCustomer();
-    clearField();
+    clearField();*/
 });
 
 
