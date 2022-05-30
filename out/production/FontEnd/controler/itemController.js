@@ -7,13 +7,13 @@ $("#itemId").click(function (){
 // add
 
 $("#btnItemAdd").click(function () {
-    console.log($("#addItemForm").serialize());
-
+    console.log("Hari 1");
     $.ajax({
-        url :"http://localhost:8080/JavaEE/item",
+        url :"http://localhost:8080/JavaEE/",
         method: "POST",
         data: $("#addItemForm").serialize(),
         success: function (res) {
+            console.log("Hari 2");
             if (res.status == 200) {
                 loadAllItemIds();
                 loadAllItem();
@@ -25,6 +25,7 @@ $("#btnItemAdd").click(function () {
 
         },
         error: function (ob, textStatus, error) {
+            console.log("Hari 3");
             console.log(ob);
             console.log(textStatus);
             console.log(error);
@@ -66,7 +67,7 @@ function setItem() {
 
 // table load
 function loadAllItem() {
-    $("#tbltBodyItem").empty();
+  /*  $("#tbltBodyItem").empty();
     $.ajax({
         url:"http://localhost:8080/JavaEE/item?option=GETALL",
         method:"GET",
@@ -83,7 +84,7 @@ function loadAllItem() {
                 alert(resp.data)
             }
         }
-    });
+    });*/
    /* for (var i of itemDB) {
         let row = `<tr><td>${i.getitemId()}</td><td>${i.getitemName()}</td><td>${i.getitemQty()}</td><td>${i.getitemPrice()}</td></tr>`
         $("#tbltBodyItem").append(row);
