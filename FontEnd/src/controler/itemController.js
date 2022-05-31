@@ -76,7 +76,7 @@ function loadAllItem() {
                     let row = `<tr><td>${item.code}</td><td>${item.name}</td><td>${item.qtyOnHand}</td><td>${item.unitPrice}</td></tr>`
                     $("#tbltBodyItem").append(row);
                     setItem();
-                    deleteItem();
+                    // deleteItem();
                 }
             }
             else{
@@ -95,22 +95,56 @@ function loadAllItem() {
 
 // itemDelete
 function deleteItem() {
-    $("#btnItemDelete").click(function () {
-        let getClickData = $("#txtItemID").val();
-        for (let i = 0; i < itemDB.length; i++) {
-            if (itemDB[i].getitemId() == getClickData) {
-                itemDB.splice(i, 1)
+    console.log("h1");
+    var clickRowId = $("#txtItemID").val();
+    $.ajax({
+        url:`http://localhost:8080/JavaEE/item?itemCode=${clickRowId}`,
+        method:"DELETE",
+
+        success:function (resp){
+            if (resp.status == 200) {
+                console.log("h2");
+                loadAllItem();
+                clearFiled();
+                generateItemId();
+            }else if (resp.status==400){
+                console.log("h3");
+                alert(resp.data);
             }
         }
-        loadAllItem();
-        clearFiled()
     });
+
+
 }
 
+$("#btnItemDelete").click(function () {
+   deleteItem();
+});
 
 // itemUpdate
 $("#btnItemUpdate").click(function () {
-    let itemId = $("#txtItemID").val();
+    var itemObj = {
+        code: $("#txtItemID").val(),
+        name: $("#txtItemName").val(),
+        qtyOnHand: parseInt($("#txtItemQty").val()),
+        unitPrice: parseInt($("#txtItemPrice").val())
+    }
+
+    $.ajax({
+        url: "http://localhost:8080/JavaEE/item", method: "PUT", data:
+            JSON.stringify(itemObj), success: function (resp) {
+            if (resp.status == 200) {
+                loadAllItem();
+                clearFiled();
+            } else if (resp.status == 400) {
+                alert(resp.data);
+            }
+        }
+    });
+
+
+
+   /* let itemId = $("#txtItemID").val();
     let itemName = $("#txtItemName").val();
     let itemQty = $("#txtItemQty").val();
     let itemPrice = $("#txtItemPrice").val();
@@ -124,13 +158,42 @@ $("#btnItemUpdate").click(function () {
 
     }
     loadAllItem();
-    clearFiled()
+    clearFiled()*/
 });
 
 
 // searchItem
 $("#btnItemSearch").click(function () {
-    var searchId = $("#txtSearchItem").val();
+    console.log("hari 1");
+    if (!$("#txtSearchItem").val()) {
+        loadAllItem();
+        return;
+    }
+    $.ajax({
+        url: "http://localhost:8080/JavaEE/item?option=SEARCH", method: "GET", data: {
+            id: $("#txtSearchItem").val()
+        }, success: function (resp) {
+            console.log("hari 2");
+            if (resp.status == 200) {
+                console.log("hari 3");
+                $("#tbltBodyItem").empty();
+                for (const item of resp.data) {
+                    console.log(item.code);
+                    let row = `<tr><td>${item.code}</td><td>${item.name}</td><td>${item.qtyOnHand}</td><td>${item.unitPrice}</td></tr>`;
+                    $("#tbltBodyItem").append(row);
+
+                }
+            } else {
+                console.log("hari 4");
+
+                alert(resp.data);
+                loadAllItem();
+                clearFiled();
+            }
+        }
+    });
+
+   /* var searchId = $("#txtSearchItem").val();
     var response = searchItem(searchId);
     if (response) {
         $("#txtItemID").val(response.getitemId());
@@ -140,7 +203,7 @@ $("#btnItemSearch").click(function () {
     } else {
         clearFiled()
         alert("Invalid Item Name");
-    }
+    }*/
 });
 
 function searchItem(id) {
@@ -182,7 +245,17 @@ $("#txtItemQty").keydown(function (event) {
 });
 
 function generateItemId() {
-    let index = itemDB.length - 1;
+    $.ajax({
+        url: "http://localhost:8080/JavaEE/item?option=GENERATED_ID", method: "GET", success: function (resp) {
+            if (resp.status == 200) {
+                $("#txtItemID").val(resp.data.code);
+            } else {
+                alert(resp.data);
+            }
+        }
+    });
+
+   /* let index = itemDB.length - 1;
     let id;
     let temp;
     if (index != -1) {
@@ -199,5 +272,5 @@ function generateItemId() {
         $("#txtItemID").val("I00-0" + temp);
     } else {
         $("#txtItemID").val("I00-" + temp);
-    }
+    }*/
 }

@@ -36,7 +36,8 @@ public class ItemServlet extends HttpServlet {
             connection = ds.getConnection();
             String option = req.getParameter("option");
             switch (option) {
-              /*  case "GENERATED_ID":
+
+                case "GENERATED_ID":
                     ResultSet rstI = connection.prepareStatement("SELECT code FROM item ORDER BY code DESC LIMIT 1").executeQuery();
                     if (rstI.next()) {
                         int tempId = Integer.parseInt(rstI.getString(1).split("-")[1]);
@@ -49,14 +50,14 @@ public class ItemServlet extends HttpServlet {
                             objectBuilder.add("code", "I00-" + tempId);
                         }
                     } else {
-                        objectBuilder.add("code", "I00-000");
+                        objectBuilder.add("code", "I00-001");
                     }
 
                     dataMsgBuilder.add("data", objectBuilder.build());
                     dataMsgBuilder.add("message", "Done");
                     dataMsgBuilder.add("status", "200");
                     writer.print(dataMsgBuilder.build());
-                    break;*/
+                    break;
 
                 case "GETALL":
                     ResultSet rst = connection.prepareStatement("SELECT * FROM item").executeQuery();
@@ -83,8 +84,10 @@ public class ItemServlet extends HttpServlet {
 
                     writer.print(dataMsgBuilder.build());
                     break;
-          /*      case "SEARCH":
-                    String id = req.getParameter("code");
+
+
+                case "SEARCH":
+                    String id = req.getParameter("id");
                     PreparedStatement pstm = connection.prepareStatement("SELECT * FROM item WHERE code LIKE ?");
                     pstm.setObject(1, "%"+id+"%");
                     ResultSet resultSet = pstm.executeQuery();
@@ -93,7 +96,7 @@ public class ItemServlet extends HttpServlet {
                         String itemCodeS = resultSet.getString(1);
                         String itemNameS = resultSet.getString(2);
                         int itemQtyOnHandS = resultSet.getInt(3);
-                        int itemUnitPriceS = resultSet.getInt(4);
+                        double itemUnitPriceS = resultSet.getDouble(4);
 
                         resp.setStatus(HttpServletResponse.SC_OK);//201
 
@@ -109,7 +112,9 @@ public class ItemServlet extends HttpServlet {
                     dataMsgBuilder.add("status", "200");
 
                     writer.print(dataMsgBuilder.build());
-                    break;*/
+                    break;
+
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -166,6 +171,95 @@ public class ItemServlet extends HttpServlet {
             }
         }
     }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        String itemCode = req.getParameter("itemCode");
+        JsonObjectBuilder dataMsgBuilder = Json.createObjectBuilder();
+        PrintWriter writer = resp.getWriter();
+        Connection connection = null;
+        try {
+            connection = ds.getConnection();
+            PreparedStatement pstm = connection.prepareStatement("DELETE FROM item WHERE code=?");
+            pstm.setObject(1, itemCode);
+
+            if (pstm.executeUpdate() > 0) {
+                resp.setStatus(HttpServletResponse.SC_OK); //200
+                dataMsgBuilder.add("data", "");
+                dataMsgBuilder.add("message", "Item Deleted");
+                dataMsgBuilder.add("status", "200");
+                writer.print(dataMsgBuilder.build());
+            }
+        } catch (SQLException e) {
+            dataMsgBuilder.add("status", 400);
+            dataMsgBuilder.add("message", "Error");
+            dataMsgBuilder.add("data", e.getLocalizedMessage());
+            writer.print(dataMsgBuilder.build());
+            resp.setStatus(HttpServletResponse.SC_OK); //200
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+
+        //we have to get updated data from JSON format
+        JsonReader reader = Json.createReader(req.getReader());
+        JsonObject jsonObject = reader.readObject();
+
+        String code = jsonObject.getString("code");
+        String name = jsonObject.getString("name");
+        int qtyOnHand = jsonObject.getInt("qtyOnHand");
+        int unitPrice = jsonObject.getInt("unitPrice");
+        PrintWriter writer = resp.getWriter();
+        System.out.println(code + " " + name + " " + qtyOnHand + " " + unitPrice);
+
+        Connection connection = null;
+        try {
+            connection = ds.getConnection();
+            PreparedStatement pstm = connection.prepareStatement("UPDATE item SET description=?, qtyOnHand=?, unitPrice=? WHERE code=?");
+            pstm.setObject(1, name);
+            pstm.setObject(2, qtyOnHand);
+            pstm.setObject(3, unitPrice);
+            pstm.setObject(4, code);
+
+            if (pstm.executeUpdate() > 0) {
+                JsonObjectBuilder response = Json.createObjectBuilder();
+                resp.setStatus(HttpServletResponse.SC_CREATED);//201
+                response.add("status", 200);
+                response.add("message", "Successfully Updated");
+                response.add("data", "");
+                writer.print(response.build());
+            }
+
+        } catch (SQLException e) {
+            JsonObjectBuilder response = Json.createObjectBuilder();
+            response.add("status", 400);
+            response.add("message", "Error");
+            response.add("data", e.getLocalizedMessage());
+            writer.print(response.build());
+            resp.setStatus(HttpServletResponse.SC_OK); //200
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+
 }
+
+
 
 
