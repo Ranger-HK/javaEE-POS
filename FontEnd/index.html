@@ -170,12 +170,188 @@
         </div>
     </div>
 </section>
+<!--order-->
+<section id="orderPage">
+    <div class="rounded-3 p-3" style="background-color: green; margin-top: 30px;">
+        <h1 class="text-center mb-3"><i class="bi bi-bag-check-fill"></i>Order Form</h1>
+    </div>
+    <div class="row align-items-center">
+        <!-- invoice -->
+        <div class="col-12 col-lg-4">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header justify-content-center bg-success">
+                        <h4 class="modal-title fw-bold">Invoice Details</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label fw-bold" for="oId">Order ID:</label>
+                                <input class="form-control" id="oId" placeholder="" type="text">
+                            </div>
+                            <div class="col">
+                                <label class="form-label fw-bold" for="iDate">Date:</label>
+                                <input class="form-control" id="iDate" type="date">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <label class="form-label fw-bold" for="idCmbOrder">Customer ID:</label>
+                                <select class="form-select" id="idCmbOrder">
+
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label class="form-label fw-bold" for="cusName">Customer Name:</label>
+                                <input class="form-control" id="cusName" placeholder="Name" type="text">
+                            </div>
+                        </div>
+                        <div class="row mt-3 mb-3">
+                            <!--==================-->
+                            <!--<div class="col">
+                                <label class="form-label fw-bold" for="salary">Salary:</label>
+                                <input class="form-control" id="salary" placeholder="" type="text">
+                            </div>-->
+                            <div class="col">
+                                <label class="form-label fw-bold" for="tepNumber">Customer Salary:</label>
+                                <input class="form-control" id="tepNumber" placeholder="Customer Salary"
+                                       type="text">
+                            </div>
+                            <!--==================-->
+                            <div class="col">
+                                <label class="form-label fw-bold" for="address">Address:</label>
+                                <input class="form-control" id="address" placeholder="Address" type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Order Item Select -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header justify-content-center bg-success">
+                        <h4 class="modal-title fw-bold">Item Select</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label fw-bold" for="idCmbItem">Item:</label>
+                                <select class="form-select" id="idCmbItem">
+
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label class="form-label fw-bold" for="itemName">Item Name:</label>
+                                <input class="form-control" id="itemName" placeholder="Item Name" type="text">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+
+                            <div class="col">
+                                <label class="form-label fw-bold" for="qtyOnHand">Qty On Hand:</label>
+                                <input class="form-control" id="qtyOnHand" placeholder="" type="number">
+                            </div>
+                            <div class="col">
+                                <label class="form-label fw-bold" for="price">Price:</label>
+                                <input class="form-control" id="price" placeholder="Price" type="text">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <label class="form-label fw-bold" for="oQty">Order Quantity:</label>
+                                <input class="form-control" id="oQty" placeholder="" type="number">
+                            </div>
+                        </div>
+                        <div class="row mt-3 mb-1">
+                            <button id="btnAddCad" class="btn btn-primary" style="background-color: #4AC29A" type="button">Add
+                                Item
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Total Select -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row mt-3">
+                            <div class="col">
+                                <p class="h2 d-inline">
+                                    Total :
+                                <h1 id="lblFullTotal"></h1>
+                                </p>
+                                <p class="h2 d-inline">
+                                    <!-- 2000 LKR-->
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <p class="h2 d-inline">
+                                    SubTotal :
+                                <h1 id="subTotal"></h1>
+                                </p>
+                                <p class="h2 d-inline">
+                                    <!--1800 LKR-->
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+
+                            <div class="col">
+                                <label class="form-label fw-bold" for="cash">Cash:</label>
+                                <input class="form-control" id="cash" placeholder="" type="text">
+                            </div>
+                            <div class="col">
+                                <label class="form-label fw-bold" for="dis">Discount:</label>
+                                <input class="form-control" id="dis" placeholder="" type="number">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+
+                            <div class="col">
+                                <label class="form-label fw-bold" for="balanceCash">Balance:</label>
+                                <input class="form-control" id="balanceCash" placeholder="" type="text">
+                            </div>
+                        </div>
+                        <div class="row mt-3 mb-1">
+                            <button class="btn btn-success"  id="purchaseBtn" type="button">Purchase</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="table-responsive" style="height: 40vh;">
+            <table class="table table-striped">
+                <thead class="" style="background-color: #16a085;">
+                <tr>
+                    <th>Item Code</th>
+                    <th>Item Name</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                </tr>
+                </thead>
+                <tbody id="orderTbody">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+<!--
 <section class="container-fluid" id="orderPage">
     <div class="rounded-3 p-3" style="background-color: #0e76a8; margin-top: 30px;">
         <h1 class="text-center mb-3"><i class="bi bi-bag-check-fill"></i>Order Form</h1>
     </div>
     <div class="row align-items-center">
-        <!-- invoice -->
+        &lt;!&ndash; invoice &ndash;&gt;
         <div class="col-12 col-lg-4">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -218,7 +394,7 @@
                 </div>
             </div>
         </div>
-        <!-- Item Select -->
+        &lt;!&ndash; Item Select &ndash;&gt;
         <div class="col-12 col-md-6 col-lg-4">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -263,7 +439,7 @@
                 </div>
             </div>
         </div>
-        <!-- Total Select -->
+        &lt;!&ndash; Total Select &ndash;&gt;
         <div class="col-12 col-md-6 col-lg-4">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -307,7 +483,7 @@
                             </div>
                         </div>
                         <div class="row mt-3 mb-1">
-                            <button class="btn btn-success" type="button">Purchase</button>
+                            <button class="btn btn-success" id="purchaseBtn" type="button">Purchase</button>
                         </div>
                     </div>
                 </div>
@@ -332,6 +508,7 @@
         </div>
     </div>
 </section>
+-->
 <script src="assets/jquery/jquery-3.6.0.min.js"></script>
 <script src="assets/js/script.js"></script>
 <script src="db/DB.js"></script>

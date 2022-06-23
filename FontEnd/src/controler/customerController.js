@@ -12,8 +12,9 @@ $("#btnAdd").click(function () {
         data: $("#addCusForm").serialize(),
         success: function (res) {
             if (res.status == 200) {
-                loadAllCustomer()
+                loadAllCustomer();
                 clearField() //Clear Input Fields
+                // loadAllCustomerIds();
                 loadAllCustomerIds();
                 generateId();
             } else {

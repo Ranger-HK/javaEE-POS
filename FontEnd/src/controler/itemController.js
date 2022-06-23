@@ -15,10 +15,12 @@ $("#btnItemAdd").click(function () {
         data: $("#addItemForm").serialize(),
         success: function (res) {
             if (res.status == 200) {
+                // loadAllItemIds();
                 loadAllItemIds();
                 loadAllItem();
                 clearFiled();
                 generateItemId();
+
             } else {
                 alert(res.data);
             }
@@ -76,7 +78,7 @@ function loadAllItem() {
                     let row = `<tr><td>${item.code}</td><td>${item.name}</td><td>${item.qtyOnHand}</td><td>${item.unitPrice}</td></tr>`
                     $("#tbltBodyItem").append(row);
                     setItem();
-                    // deleteItem();
+                    deleteItem();
                 }
             }
             else{
@@ -95,7 +97,6 @@ function loadAllItem() {
 
 // itemDelete
 function deleteItem() {
-    console.log("h1");
     var clickRowId = $("#txtItemID").val();
     $.ajax({
         url:`http://localhost:8080/JavaEE/item?itemCode=${clickRowId}`,
@@ -103,12 +104,10 @@ function deleteItem() {
 
         success:function (resp){
             if (resp.status == 200) {
-                console.log("h2");
                 loadAllItem();
                 clearFiled();
                 generateItemId();
             }else if (resp.status==400){
-                console.log("h3");
                 alert(resp.data);
             }
         }
@@ -164,7 +163,6 @@ $("#btnItemUpdate").click(function () {
 
 // searchItem
 $("#btnItemSearch").click(function () {
-    console.log("hari 1");
     if (!$("#txtSearchItem").val()) {
         loadAllItem();
         return;
@@ -173,19 +171,14 @@ $("#btnItemSearch").click(function () {
         url: "http://localhost:8080/JavaEE/item?option=SEARCH", method: "GET", data: {
             id: $("#txtSearchItem").val()
         }, success: function (resp) {
-            console.log("hari 2");
             if (resp.status == 200) {
-                console.log("hari 3");
                 $("#tbltBodyItem").empty();
                 for (const item of resp.data) {
-                    console.log(item.code);
                     let row = `<tr><td>${item.code}</td><td>${item.name}</td><td>${item.qtyOnHand}</td><td>${item.unitPrice}</td></tr>`;
                     $("#tbltBodyItem").append(row);
 
                 }
             } else {
-                console.log("hari 4");
-
                 alert(resp.data);
                 loadAllItem();
                 clearFiled();
@@ -217,7 +210,7 @@ function searchItem(id) {
 
 // ClearMethod
 function clearFiled() {
-    $("#txtItemID,#txtItemName,#txtItemQty,#txtItemPrice").val("");
+    $("#txtItemID,#txtItemName,#txtItemQty,#txtItemPrice,txtSearchItem").val("");
 }
 
 
